@@ -3,7 +3,7 @@
   "info": {
     "version": "v2",
     "title": "WSO2 API Manager - Gateway",
-    "description": "This specifies a **RESTful API** for WSO2 **API Manager** - Gateway.\n\nPlease see [full swagger definition](https://raw.githubusercontent.com/wso2/carbon-apimgt/v6.7.206/components/apimgt/org.wso2.carbon.apimgt.rest.api.gateway.v2/src/main/resources/gateway-api.yaml) of the API which is written using [swagger 2.0](http://swagger.io/) specification.\n",
+    "description": "This document specifies a **RESTful API** for WSO2 **API Manager** - Gateway.\nPlease see [full swagger definition](https://raw.githubusercontent.com/wso2/carbon-apimgt/master/components/apimgt/org.wso2.carbon.apimgt.rest.api.gateway/src/main/resources/gateway-api.yaml) of the API which is written using [swagger 2.0](http://swagger.io/) specification.\n",
     "contact": {
       "name": "WSO2",
       "url": "http://wso2.com/products/api-manager/",
@@ -28,38 +28,19 @@
   "paths": {
     "/redeploy-api": {
       "post": {
-        "x-code-samples": [
-          {
-            "lang": "Curl",
-            "source": "\"curl -k -X POST \"https://127.0.0.1:9443/api/am/gateway/v2/redeploy-api?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
-          }
-        ],
-        "summary": "Re Deploy the API in the gateway",
+        "summary": "Redeploy the API in the gateway",
         "description": "This operation is used to re deploy an API in the gateway. If the Tenant domain is not provided carbon.super\nwill be picked as the Tenant domain.\n",
+        "operationId": "redployAPI",
         "parameters": [
           {
-            "name": "apiName",
-            "description": "Name of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/apiName"
           },
           {
-            "name": "version",
-            "description": "version of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/version"
           },
           {
-            "name": "tenantDomain",
-            "description": "Tenant Domain of the API\n",
-            "in": "query",
-            "type": "string"
+            "$ref": "#/parameters/tenantDomain"
           }
-        ],
-        "tags": [
-          "ReDeploy API"
         ],
         "responses": {
           "200": {
@@ -69,48 +50,41 @@
             }
           },
           "400": {
-            "$ref": "#/responses/BadRequest"
+            "description": "Bad Request.\nInvalid request or validation error\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "$ref": "#/responses/NotFound"
+            "description": "Not Found.\nRequested API does not exist.\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           }
-        }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Curl",
+            "source": "\"curl -k -X POST \"https://127.0.0.1:9443/api/am/gateway/v2/redeploy-api?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
+          }
+        ]
       }
     },
     "/undeploy-api": {
       "post": {
-        "x-code-samples": [
-          {
-            "lang": "Curl",
-            "source": "\"curl -k -X POST \"https://127.0.0.1:9443/api/am/gateway/v2/undeploy-api?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
-          }
-        ],
         "summary": "Uneploy the API in the gateway",
         "description": "This operation is used to undeploy an API in the gateway. If the Tenant domain is not provided carbon.super will\nbe picked as the Tenant domain.\n",
+        "operationId": "undeployAPI",
         "parameters": [
           {
-            "name": "apiName",
-            "description": "Name of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/apiName"
           },
           {
-            "name": "version",
-            "description": "version of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/version"
           },
           {
-            "name": "tenantDomain",
-            "description": "Tenant Domain of the API\n",
-            "in": "query",
-            "type": "string"
+            "$ref": "#/parameters/tenantDomain"
           }
-        ],
-        "tags": [
-          "Undeploy API"
         ],
         "responses": {
           "200": {
@@ -120,48 +94,41 @@
             }
           },
           "400": {
-            "$ref": "#/responses/BadRequest"
+            "description": "Bad Request.\nInvalid request or validation error\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "$ref": "#/responses/NotFound"
-          }
+            "description": "Not Found.\nRequested API does not exist.\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "x-code-samples": [
+            {
+              "lang": "Curl",
+              "source": "curl -k -X POST \"https://127.0.0.1:9443/api/am/gateway/v2/undeploy-api?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
+            }
+          ]
         }
       }
     },
     "/api-artifact": {
       "get": {
-        "x-code-samples": [
-          {
-            "lang": "Curl",
-            "source": "\"curl -k -X GET \"https://127.0.0.1:9443/api/am/gateway/v2/api-artifact?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
-          }
-        ],
         "summary": "Get API artifact from the storage",
         "description": "This operation is used to get the local entries, sequences and endpoints from the storage. If the Tenant domain\nis not provided carbon.super will be picked as the Tenant domain.\n",
+        "operationId": "getAPIArtifacts",
         "parameters": [
           {
-            "name": "apiName",
-            "description": "Name of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/apiName"
           },
           {
-            "name": "version",
-            "description": "version of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/version"
           },
           {
-            "name": "tenantDomain",
-            "description": "Tenant Domain of the API\n",
-            "in": "query",
-            "type": "string"
+            "$ref": "#/parameters/tenantDomain"
           }
-        ],
-        "tags": [
-          "Get API Artifacts"
         ],
         "responses": {
           "200": {
@@ -171,48 +138,41 @@
             }
           },
           "400": {
-            "$ref": "#/responses/BadRequest"
+            "description": "Bad Request.\nInvalid request or validation error\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "$ref": "#/responses/NotFound"
-          }
+            "description": "Not Found.\nRequested API does not exist.\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "x-code-samples": [
+            {
+              "lang": "Curl",
+              "source": "curl -k \"https://127.0.0.1:9443/api/am/gateway/v2/api-artifact?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
+            }
+          ]
         }
       }
     },
     "/local-entry": {
       "get": {
-        "x-code-samples": [
-          {
-            "lang": "Curl",
-            "source": "\"curl -k -X GET \"https://127.0.0.1:9443/api/am/gateway/v2/local-entry?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
-          }
-        ],
         "summary": "Get Local Entry from the storage",
         "description": "This operation is used to get local entry from the storage.If the Tenant domain is not provided carbon.super\nwill be picked as the Tenant domain.\n",
+        "operationId": "getLocalEntries",
         "parameters": [
           {
-            "name": "apiName",
-            "description": "Name of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/apiName"
           },
           {
-            "name": "version",
-            "description": "version of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/version"
           },
           {
-            "name": "tenantDomain",
-            "description": "Tenant Domain of the API\n",
-            "in": "query",
-            "type": "string"
+            "$ref": "#/parameters/tenantDomain"
           }
-        ],
-        "tags": [
-          "Get API Artifacts"
         ],
         "responses": {
           "200": {
@@ -222,48 +182,41 @@
             }
           },
           "400": {
-            "$ref": "#/responses/BadRequest"
+            "description": "Bad Request.\nInvalid request or validation error\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "$ref": "#/responses/NotFound"
-          }
+            "description": "Not Found.\nRequested API does not exist.\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "x-code-samples": [
+            {
+              "lang": "Curl",
+              "source": "curl -k \"https://127.0.0.1:9443/api/am/gateway/v2/local-entry?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
+            }
+          ]
         }
       }
     },
     "/sequence": {
       "get": {
-        "x-code-samples": [
-          {
-            "lang": "Curl",
-            "source": "\"curl -k -X POST \"https://127.0.0.1:9443/api/am/gateway/v2/sequence?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
-          }
-        ],
         "summary": "Get sequences from the storage",
         "description": "This operation is used to get the API sequence from the storage. If the Tenant domain is not provided carbon.super\nwill be picked as the Tenant domain.\n",
+        "operationId": "getSequences",
         "parameters": [
           {
-            "name": "apiName",
-            "description": "Name of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/apiName"
           },
           {
-            "name": "version",
-            "description": "version of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/version"
           },
           {
-            "name": "tenantDomain",
-            "description": "Tenant Domain of the API\n",
-            "in": "query",
-            "type": "string"
+            "$ref": "#/parameters/tenantDomain"
           }
-        ],
-        "tags": [
-          "Get API Artifacts"
         ],
         "responses": {
           "200": {
@@ -273,105 +226,91 @@
             }
           },
           "400": {
-            "$ref": "#/responses/BadRequest"
+            "description": "Bad Request.\nInvalid request or validation error\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "$ref": "#/responses/NotFound"
-          }
+            "description": "Not Found.\nRequested API does not exist.\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "x-code-samples": [
+            {
+              "lang": "Curl",
+              "source": "curl -k \"https://127.0.0.1:9443/api/am/gateway/v2/sequence?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
+            }
+          ]
         }
       }
     },
     "/end-points": {
       "get": {
-        "x-code-samples": [
-          {
-            "lang": "Curl",
-            "source": "\"curl -k -X POST \"https://127.0.0.1:9443/api/am/gateway/v2/end-points?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\\\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
-          }
-        ],
         "summary": "Get end-points from the storage for the API",
         "description": "This operation is used to get the end-points from the storage. If the Tenant domain is not provided\ncarbon.super will be picked as the Tenant domain.\n",
+        "operationId": "getEndpoints",
         "parameters": [
           {
-            "name": "apiName",
-            "description": "Name of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/apiName"
           },
           {
-            "name": "version",
-            "description": "version of the API\n",
-            "in": "query",
-            "type": "string",
-            "required": true
+            "$ref": "#/parameters/version"
           },
           {
-            "name": "tenantDomain",
-            "description": "Tenant Domain of the API\n",
-            "in": "query",
-            "type": "string"
+            "$ref": "#/parameters/tenantDomain"
           }
-        ],
-        "tags": [
-          "Get API Artifacts"
         ],
         "responses": {
           "200": {
             "description": "OK.\nEnd-points successfully retrieved from the storage for the API.\n",
             "schema": {
-              "$ref": "#/definitions/DeployResponse"
+              "$ref": "#/definitions/Endpoints"
             }
           },
           "400": {
-            "$ref": "#/responses/BadRequest"
+            "description": "Bad Request.\nInvalid request or validation error\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
           },
           "404": {
-            "$ref": "#/responses/NotFound"
-          }
+            "description": "Not Found.\nRequested API does not exist.\n",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "x-code-samples": [
+            {
+              "lang": "Curl",
+              "source": "curl -k \"https://127.0.0.1:9443/api/am/gateway/v2/end-points?apiName=PizzaAPI&version=1.0&tenantDomain=registry.com\" -H \"Authorization: Basic YWRtaW46YWRtaW4=\""
+            }
+          ]
         }
       }
     }
   },
   "parameters": {
-    "apiId-Q": {
-      "name": "apiId",
+    "apiName": {
+      "name": "apiName",
       "in": "query",
-      "description": "**API ID** consisting of the **UUID** of the API.\nThe combination of the provider of the API, name of the API and the version is also accepted as a valid API I.\nShould be formatted as **provider-name-version**.\n",
+      "description": "Name of the API\n",
+      "type": "string",
+      "required": true
+    },
+    "version": {
+      "name": "version",
+      "in": "query",
+      "description": "version of the API\n",
       "required": true,
       "type": "string"
-    }
-  },
-  "responses": {
-    "BadRequest": {
-      "description": "Bad Request. Invalid request or validation error.",
-      "schema": {
-        "$ref": "#/definitions/Error"
-      },
-      "examples": {
-        "application/json": {
-          "code": 400,
-          "message": "Bad Request",
-          "description": "Invalid request or validation error",
-          "moreInfo": "",
-          "error": []
-        }
-      }
     },
-    "NotFound": {
-      "description": "Not Found. The specified resource does not exist.",
-      "schema": {
-        "$ref": "#/definitions/Error"
-      },
-      "examples": {
-        "application/json": {
-          "code": 404,
-          "message": "Not Found",
-          "description": "The specified resource does not exist",
-          "moreInfo": "",
-          "error": []
-        }
-      }
+    "tenantDomain": {
+      "name": "tenantDomain",
+      "in": "query",
+      "description": "Tenant Domain of the API\n",
+      "type": "string"
     }
   },
   "definitions": {
@@ -382,16 +321,17 @@
       ],
       "properties": {
         "deployStatus": {
-          "description": "This attribute declares whether deployment task is successful or failed.\n",
+          "description": "This attribute declares whether deployment task is successfull or failed.\n",
           "type": "string",
           "enum": [
             "DEPLOYED",
+            "UNDEPLOYED",
             "ERROR"
           ],
           "example": "DEPLOYED"
         },
         "jsonPayload": {
-          "description": "Attributes that returned after the API deployment\n",
+          "description": "Attributes that returned after the api deployment\n",
           "type": "string"
         }
       }
@@ -399,20 +339,12 @@
     "Endpoints": {
       "title": "Endpoints Response",
       "properties": {
-        "deployedEndpoints": {
+        "endpoints": {
           "description": "The end points which has been deployed in the gateway\n",
           "type": "array",
           "items": {
             "type": "string",
-            "example": "<endpoint xmlns=\"http://ws.apache.org/ns/synapse\" name=\"PizzaShackAPI--v2.0.0_APIproductionEndpoint\"><http uri-template=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"><timeout><responseAction>fault</responseAction></timeout></http><property name=\"ENDPOINT_ADDRESS\" value=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"/></endpoint>"
-          }
-        },
-        "UnDeployedEndpoints": {
-          "description": "The end points which has not been deployed in the gateway\n",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "<endpoint xmlns=\"http://ws.apache.org/ns/synapse\" name=\"PizzaShackAPI--v2.0.0_APIproductionEndpoint\"><http uri-template=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"><timeout><responseAction>fault</responseAction></timeout></http><property name=\"ENDPOINT_ADDRESS\" value=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"/></endpoint>"
+            "example": "<endpoint xmlns=\"http://ws.apache.org/ns/synapse\" name=\"PizzaShackAPI--v1.0.0_APIproductionEndpoint\"><http uri-template=\"https://localhost:9443/am/sample/pizzashack/v1/api/\"><timeout><responseAction>fault</responseAction></timeout></http><property name=\"ENDPOINT_ADDRESS\" value=\"https://localhost:9443/am/sample/pizzashack/v1/api/\"/></endpoint>"
           }
         }
       }
@@ -420,20 +352,12 @@
     "Sequences": {
       "title": "Sequences Response",
       "properties": {
-        "deployedSequences": {
+        "sequences": {
           "description": "The sequences which has been deployed in the gateway\n",
           "type": "array",
           "items": {
             "type": "string",
-            "example": "<sequence xmlns=\"http://ws.apache.org/ns/synapse\" name=\"PizzaShackAPI--v2.0.0_APIproductionEndpoint\"><http uri-template=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"><timeout><responseAction>fault</responseAction></timeout></http><property name=\"ENDPOINT_ADDRESS\" value=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"/></sequnce>"
-          }
-        },
-        "UnDeployedSequences": {
-          "description": "The sequences which has not been deployed in the gateway\n",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "<sequence xmlns=\"http://ws.apache.org/ns/synapse\" name=\"PizzaShackAPI--v2.0.0_APIproductionEndpoint\"><http uri-template=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"><timeout><responseAction>fault</responseAction></timeout></http><property name=\"ENDPOINT_ADDRESS\" value=\"https://localhost:9443/am/sample/pizzashack/v2/api/\"/></sequnce>"
+            "example": "<sequence xmlns=\"http://ws.apache.org/ns/synapse\" name=\"PizzaShackAPI--v1.0.0_APIproductionEndpoint\"><http uri-template=\"https://localhost:9443/am/sample/pizzashack/v1/api/\"><timeout><responseAction>fault</responseAction></timeout></http><property name=\"ENDPOINT_ADDRESS\" value=\"https://localhost:9443/am/sample/pizzashack/v1/api/\"/></sequnce>"
           }
         }
       }
@@ -441,20 +365,12 @@
     "LocalEntry": {
       "title": "LocalEntry Response",
       "properties": {
-        "deployedLocalEntries": {
+        "localEntries": {
           "description": "The local entries which has been deployed in the gateway\n",
           "type": "array",
           "items": {
             "type": "string",
-            "example": "<localEntry xmlns=\"http://ws.apache.org/ns/synapse\" key=\"ga-config-key\" type=\"1\"><GoogleAnalyticsTracking xmlns=\"\">\n\t<!--Enable/Disable Google Analytics Tracking -->\n\t<Enabled>false</Enabled>\n\n\t<!-- Google Analytics Tracking ID -->\n\t<TrackingID>UA-XXXXXXXX-X</TrackingID>\n\n</GoogleAnalyticsTracking></localEntry>"
-          }
-        },
-        "UnDeployedLocalEntries": {
-          "description": "The local entries which has not been deployed in the gateway\n",
-          "type": "array",
-          "items": {
-            "type": "string",
-            "example": "<localEntry xmlns=\"http://ws.apache.org/ns/synapse\" key=\"ga-config-key\" type=\"1\"><GoogleAnalyticsTracking xmlns=\"\">\n\t<!--Enable/Disable Google Analytics Tracking -->\n\t<Enabled>false</Enabled>\n\n\t<!-- Google Analytics Tracking ID -->\n\t<TrackingID>UA-XXXXXXXX-X</TrackingID>\n\n</GoogleAnalyticsTracking></localEntry>"
+            "example": "localEntry xmlns=\"http://ws.apache.org/ns/synapse\" key=\"ga-config-key\" type=\"1\"><GoogleAnalyticsTracking xmlns=\"\">\n\t<!--Enable/Disable Google Analytics Tracking -->\n\t<Enabled>false</Enabled>\n\n\t<!-- Google Analytics Tracking ID -->\n\t<TrackingID>UA-XXXXXXXX-X</TrackingID>\n\n</GoogleAnalyticsTracking></localEntry>"
           }
         }
       }
@@ -462,19 +378,10 @@
     "APIArtifact": {
       "title": "API Artifact Response",
       "properties": {
-        "count": {
-          "type": "integer",
-          "description": "Number of Artifacts Returned\n",
-          "example": 1
-        },
-        "endpoints": {
-          "$ref": "#/definitions/Endpoints"
-        },
-        "localEntries": {
-          "$ref": "#/definitions/LocalEntry"
-        },
-        "sequences": {
-          "$ref": "#/definitions/Sequences"
+        "api": {
+          "type": "string",
+          "description": "API Artifact deployed in Gateway.\n",
+          "example": ""
         }
       }
     },
