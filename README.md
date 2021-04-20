@@ -16,7 +16,8 @@ You need the latest versions of `Python` and `PIP` installed in your machine. Th
 
 ## Getting Started
 
-1. Check `config.py` file to change configurations if the APIM is not deployed in localhost.
-2. Run `python cli-apim.py` in terminal to start the CLI. 
+1. Download the source code using the command `git clone https://github.com/binodmx/cli-apim.git`
+2. Check `config.py` file to change configurations if the APIM is not deployed in localhost
+3. Run `python cli-apim.py` command to start the CLI
 
 > This is an interactive CLI, so you don't need to remember any command. Just follow the instructions.

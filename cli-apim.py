@@ -2,9 +2,45 @@ import json
 import base64
 import requests
 import config
-import auth
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
+
+
+def get_consumer_credentials():
+    url = config.host + config.client_register_path
+    headers = {
+        "Authorization": "Basic %s" % base64.b64encode(
+            str(config.admin_username + ":" + config.admin_password).encode()).decode("utf-8"),
+        "Content-Type": "application/json"
+    }
+    payload = json.dumps({
+        "callbackUrl": "www.google.lk",
+        "clientName": "rest_api_publisher",
+        "owner": "admin",
+        "grantType": "password refresh_token",
+        "saasApp": True
+    })
+    response = requests.post(url, headers=headers, data=payload, verify=False)
+    return response.json()
+
+
+def get_access_token(scopes):
+    consumer_credentials = get_consumer_credentials()
+    url = config.host + config.token_path
+    headers = {
+        "Authorization": "Basic " + base64.b64encode(
+            str(consumer_credentials['clientId'] + ":" + consumer_credentials['clientSecret']).encode()).decode(
+            "utf-8"),
+        "Content-Type": "application/json"
+    }
+    payload = json.dumps({
+        "grant_type": "password",
+        "username": config.admin_username,
+        "password": config.admin_password,
+        "scope": scopes
+    })
+    response = requests.post(url, headers=headers, data=payload, verify=False)
+    return response.json()["access_token"]
 
 
 def run(portal):
@@ -39,14 +75,14 @@ def run(portal):
             choice_for_tag = int(input("\nChoose an option to continue: "))
             if choice_for_tag < 1 or choice_for_tag > len(tags) + 1:
                 raise ValueError
+            if choice_for_tag == i:
+                break
         except ValueError:
             exit_response = input("Invalid option. Do you want to exit (y/n)? ")
             if exit_response == "y" or exit_response == "Y":
                 break
             else:
                 continue
-        if choice_for_tag == i:
-            break
         print("\nOperations under '%s'" % tags[choice_for_tag - 1])
         ops = []
         j = 1
@@ -62,12 +98,14 @@ def run(portal):
             choice_for_op = int(input("\nChoose an option to continue: "))
             if choice_for_op < 1 or choice_for_op > len(ops) + 1:
                 raise ValueError
+            if choice_for_op == j:
+                continue
         except ValueError:
             exit_response = input("Invalid option. Do you want to exit (y/n)? ")
             if exit_response == "y" or exit_response == "Y":
                 break
-        if choice_for_op == j:
-            continue
+            else:
+                continue
         print("\nDefine parameters under '%s'" %
               oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]]["summary"].strip())
         url = config.host + base_path + ops[choice_for_op - 1]["path"]
@@ -85,6 +123,19 @@ def run(portal):
                 del params[param]
             elif param in url:
                 url = url.replace("{" + param + "}", params[param])
+        body = "{}"
+        has_body = True if "requestBody" in oas["paths"][ops[choice_for_op - 1]["path"]][
+            ops[choice_for_op - 1]["method"]].keys() else False
+        if has_body:
+            file_name = input("Enter file name having the request body* (json): ")
+            try:
+                fo = open(file_name)
+                body = json.dumps(json.loads(fo.read()))
+                fo.close()
+            except:
+                print("Invalid file.")
+                input("\nPress enter to continue...")
+                continue
         if portal == "gateway":
             headers = {
                 "Authorization": "Basic %s" % base64.b64encode(
@@ -96,10 +147,11 @@ def run(portal):
                 oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]]["security"][0][
                     "OAuth2Security"])
             headers = {
-                "Authorization": "Bearer %s" % auth.get_access_token(scopes)
+                "Authorization": "Bearer %s" % get_access_token(scopes),
+                "Content-Type": "application/json"
             }
         response = requests.request(ops[choice_for_op - 1]["method"], url, headers=headers, params=params,
-                                    verify=False)
+                                    data=body, verify=False)
         print()
         if response.status_code == 200:
             try:
