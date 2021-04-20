@@ -1,23 +1,24 @@
 import requests
-import json
+import base64
+import config
 
 
 requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
-# API (Collection)
 
-
-def viewApis(viewAccessToken):
-    url = host + basePath + "/apis"
+def retrieve_apis(view_access_token):
+    url = config.protocol + config.host + ":" + config.servlet_port + config.publisher_path + "/apis"
     headers = {
-        "Authorization": "Bearer %s" % viewAccessToken,
+        "Authorization": "Bearer %s" % view_access_token,
         "Accept": "application/json",
         "Content-Type": "application/json",
         "If-None-Match": ""
     }
     params = {
         "limit": 25,
-        "offset": 0
+        "offset": 0,
+        "query": "",
+        "expand": False
     }
     response = requests.get(url, headers=headers, params=params, verify=False)
     return response

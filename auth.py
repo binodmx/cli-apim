@@ -4,8 +4,8 @@ import json
 import config
 
 
-def register_client():
-    url = config.protocol + config.host + ":" + config.servlet_port + config.client_register_path
+def get_consumer_credentials():
+    url = config.host + config.client_register_path
     headers = {
         "Authorization": "Basic %s" % base64.b64encode(
             str(config.admin_username + ":" + config.admin_password).encode()).decode("utf-8"),
@@ -19,11 +19,12 @@ def register_client():
         "saasApp": True
     })
     response = requests.post(url, headers=headers, data=payload, verify=False)
-    return response
+    return response.json()
 
 
-def generate_access_token(consumer_credentials, scope):
-    url = config.protocol + config.host + ":" + config.servlet_port + config.token_path
+def get_access_token(scopes):
+    consumer_credentials = get_consumer_credentials()
+    url = config.host + config.token_path
     headers = {
         "Authorization": "Basic " + base64.b64encode(
             str(consumer_credentials['clientId'] + ":" + consumer_credentials['clientSecret']).encode()).decode(
@@ -34,7 +35,7 @@ def generate_access_token(consumer_credentials, scope):
         "grant_type": "password",
         "username": config.admin_username,
         "password": config.admin_password,
-        "scope": scope
+        "scope": scopes
     })
     response = requests.post(url, headers=headers, data=payload, verify=False)
-    return response
+    return response.json()["access_token"]

@@ -16,6 +16,7 @@ You need the latest versions of `Python` and `PIP` installed in your machine. Th
 
 ## Getting Started
 
-Run `python cli.py` in terminal to start the CLI. 
+1. Check `config.py` file to change configurations if the APIM is not deployed in localhost.
+2. Run `python cli.py` in terminal to start the CLI. 
 
 > This is an interactive CLI, so you don't need to remember any command. Just follow the instructions.
