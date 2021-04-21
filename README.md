@@ -21,3 +21,7 @@ You need the latest versions of `Python` and `PIP` installed in your machine. Th
 3. Run `python cli-apim.py` command to start the CLI
 
 > This is an interactive CLI, you don't need to remember any command.
+
+## Demo
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/36144069/115514627-eb892480-a2a1-11eb-8763-f880899b33b1.gif)
