@@ -112,25 +112,31 @@ def run(portal):
                     continue
             print("\nDefine parameters under '%s'" %
                   oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]]["summary"].strip())
+
+            # set request URL
             url = config.host + base_path + ops[choice_for_op - 1]["path"]
+
+            # set parameters
             params = {}
-            for param in oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]]["parameters"]:
-                if list(param.keys())[0] == "$ref":
-                    param = oas["components"]["parameters"][param["$ref"].split("/")[-1]]
-                is_required = True if "required" in param.keys() and param["required"] else False
-                param_type = param["schema"]["type"] if "schema" in param.keys() else param["type"]
-                params[param["name"]] = input(
-                    "Enter %s%s (%s): " % (param["name"], "*" if is_required else "", param_type))
-            param_keys = list(params.keys())
-            for param in param_keys:
-                if params[param] == '':
-                    del params[param]
-                elif param in url:
-                    url = url.replace("{" + param + "}", params[param])
+            if "parameters" in oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]].keys():
+                for param in oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]]["parameters"]:
+                    if list(param.keys())[0] == "$ref":
+                        param = oas["components"]["parameters"][param["$ref"].split("/")[-1]]
+                    is_required = True if "required" in param.keys() and param["required"] else False
+                    param_type = param["schema"]["type"] if "schema" in param.keys() and "type" in param["schema"].keys() else param["type"]
+                    param_enum = param["schema"]["enum"] if "schema" in param.keys() and "enum" in param["schema"].keys() else []
+                    params[param["name"]] = input(
+                        "Enter %s%s %s(%s): " % (param["name"], "*" if is_required else "", "[" + "/".join(param_enum) + "]" if len(param_enum) > 0 else "", param_type))
+                param_keys = list(params.keys())
+                for param in param_keys:
+                    if params[param] == '':
+                        del params[param]
+                    elif param in url:
+                        url = url.replace("{" + param + "}", params[param])
+
+            # set request body
             body = "{}"
-            has_body = True if "requestBody" in oas["paths"][ops[choice_for_op - 1]["path"]][
-                ops[choice_for_op - 1]["method"]].keys() else False
-            if has_body:
+            if "requestBody" in oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]].keys():
                 file_name = input("Enter file name having the request body* (json): ")
                 try:
                     fo = open(file_name)
@@ -140,33 +146,32 @@ def run(portal):
                     print("Invalid file.")
                     input("\nPress enter to continue...")
                     continue
+
+            # set request headers
+            headers = {}
             scopes = " ".join(
                 oas["paths"][ops[choice_for_op - 1]["path"]][ops[choice_for_op - 1]["method"]]["security"][0][
                     "OAuth2Security"])
-            headers = {
-                "Authorization": "Bearer %s" % get_access_token(scopes),
-                "Content-Type": "application/json"
-            }
-            response = requests.request(ops[choice_for_op - 1]["method"], url, headers=headers, params=params,
-                                        data=body, verify=False)
-            print()
-            if response.status_code == 200:
-                try:
-                    print(json.dumps(response.json(), indent=4, sort_keys=True))
-                except:
-                    print(
-                        "\033[1;31mError occured while decoding json object. Check whether you are using correct API "
-                        "version.\033[0;37m")
-            else:
+            headers["Authorization"] = "Bearer %s" % get_access_token(scopes)
+            headers["Content-Type"] = "application/json"
+
+            # get response
+            response = requests.request(ops[choice_for_op - 1]["method"], url, headers=headers, params=params, data=body, verify=False)
+
+            # print response
+            print("\nResponse status code: %i" % response.status_code)
+            try:
+                print(json.dumps(response.json(), indent=4, sort_keys=True))
+            except:
                 print(response)
             input("\nPress enter to continue...")
 
 
 def start():
     while True:
-        print("\n====================================")
-        print("CLI for WSO2 API Manager RESTful API")
-        print("====================================\n")
+        print("\n=====================================")
+        print("CLI for WSO2 API Manager RESTful APIs")
+        print("=====================================\n")
         print("You can access following RESTful APIs.")
         print("[1] WSO2 Publisher v2\n"
               "[2] WSO2 Developer Portal v2\n"
